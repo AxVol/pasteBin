@@ -39,3 +39,47 @@ a.links {
     margin: 10px 5px 10px 15px;
     text-decoration: none;
 }
+
+textarea.inputText {
+    border-radius: 5px;
+    background-color: #2b4462;
+    color: white;
+    width: 1300px;
+    height: 500px;
+    padding: 13px;
+}
+
+input.inputText {
+    border-radius: 5px;
+    background-color: #2b4462;
+    color: white;
+    margin-top: 10px;
+}
+
+h1.textColor {
+    color: white;
+}
+
+.wrap {
+    width: 1310px;
+    margin: 0 auto;
+    height: 120px;
+}
+
+p.textColor {
+    color: white;
+}
+
+.block {
+    float: left;
+    width: 200px;
+}
+
+button.create-btn {
+    border-radius: 15px;
+    background: #2b4462;
+    color: white;
+    padding: 6px;
+    width: 186px;
+    margin-top: 15px;
+}

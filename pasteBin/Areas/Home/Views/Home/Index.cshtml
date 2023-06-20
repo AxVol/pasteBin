@@ -1,10 +1,24 @@
-﻿@model PeopleModel;
+﻿@model PasteModel
 
 @{
     ViewData["Title"] = "Home Page";
 }
 
-<div class="text-color">
-    <h1 class="display-4">Welcome</h1>
-    <h1> @Model.name </h1>
+<div>
+    <form method="post" asp-area="Home" asp-controller="Home" asp-action="Article">
+        <textarea class="inputText" asp-for="Text"></textarea>
+        <div class="wrap">
+            <div class="text-color block">
+                <p style="margin-top: 14px;"> Название: </p>
+                <p> Описание: </p>
+                <p> Дата удаления поста: </p>
+            </div>
+            <div class="block">
+                <input asp-for="Title" class="inputText" />
+                <input asp-for="Description" class="inputText" />
+                <input asp-for="DeleteDate" class="inputText" />
+            </div>
+        </div>
+        <button action="sumbit" class="create-btn">Создать</button>
+    </form>
 </div>
