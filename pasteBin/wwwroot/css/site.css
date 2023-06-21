@@ -83,3 +83,7 @@ button.create-btn {
     width: 186px;
     margin-top: 15px;
 }
+
+.link-alert {
+    display: none;
+}

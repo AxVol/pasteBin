@@ -5,20 +5,31 @@
 }
 
 <div>
-    <form method="post" asp-area="Home" asp-controller="Home" asp-action="Article">
+    <div class="text-color">
+        <p> @ViewBag.Text </p>
+    </div>
+    <form method="post" asp-area="Home" asp-controller="Home" asp-action="Index">
         <textarea class="inputText" asp-for="Text"></textarea>
         <div class="wrap">
             <div class="text-color block">
                 <p style="margin-top: 14px;"> Название: </p>
-                <p> Описание: </p>
+                <p> Тема: </p>
                 <p> Дата удаления поста: </p>
             </div>
             <div class="block">
                 <input asp-for="Title" class="inputText" />
-                <input asp-for="Description" class="inputText" />
+                <input asp-for="Topic" class="inputText" />
                 <input asp-for="DeleteDate" class="inputText" />
+            </div>
+            <div class="block text-color">
+                <p style="margin-top: 14px;"> @ViewBag.Name </p>
             </div>
         </div>
         <button action="sumbit" class="create-btn">Создать</button>
     </form>
+    <div class="text-color">
+        <a class="links" href="@ViewBag.UrlToPaste" id="url-fields"> @ViewBag.UrlToPaste </a>
+        <button class="create-btn">Скопировать ссылку</button>
+        <p class="link-alert">Ссылка скопирована</p>
+    </div>
 </div>

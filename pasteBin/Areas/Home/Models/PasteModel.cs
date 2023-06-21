@@ -5,7 +5,7 @@ namespace pasteBin.Areas.Home.Models
     public class PasteModel
     {
         private readonly int offsetDelete = 30;
-        private string description;
+        private string topic;
         private DateTime? deleteDate;
 
         [Required]
@@ -16,10 +16,7 @@ namespace pasteBin.Areas.Home.Models
         public DateTime CreateAt { get; set; }
         public DateTime? DeleteDate 
         {
-            get
-            {
-                return deleteDate;
-            }
+            get => deleteDate;
             set
             {
                 if (value == null || value < DateTime.Now)
@@ -32,18 +29,18 @@ namespace pasteBin.Areas.Home.Models
                 deleteDate = value;
             }
         }
-        public string? Description
+        public string? Topic
         {
-            get => description;
+            get => topic;
             set
             {
                 if (value == null)
                 {
-                    description = "Описание отсутствует";
+                    topic = "Описание отсутствует";
                     return;
                 }
 
-                description = value;
+                topic = value;
             }
         }
 

@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using pasteBin.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -6,6 +7,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+builder.Services.AddTransient<IHashGenerator, HashGenerator>();
 //builder.Services.AddDbContext<>(optinos => optinos.UseSqlServer(DBConnection));
 
 var app = builder.Build();
@@ -32,9 +34,5 @@ app.MapControllerRoute(
 app.MapControllerRoute(
     name: "default",
     pattern: "{area=Home}/{controller=Home}/{action=Index}");
-
-//app.MapFallbackToController(
-//    controller: "Home",
-//    action: "Error");
 
 app.Run();

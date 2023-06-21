@@ -1,12 +1,21 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
+using Microsoft.AspNetCore.Mvc.Routing;
 using pasteBin.Areas.Home.Models;
+using pasteBin.Services;
 
 namespace pasteBin.Areas.Home.Controllers
 {
     [Area("Home")]
     public class HomeController : Controller
     {
+        private IHashGenerator hashGenerator;
+
+        public HomeController(IHashGenerator HashGenerator)
+        {
+            this.hashGenerator = HashGenerator;
+        }
+
         [Route("")]
         [Route("Home")]
         [HttpGet]
@@ -18,32 +27,36 @@ namespace pasteBin.Areas.Home.Controllers
         [HttpPost]
         public IActionResult Index(PasteModel paste)
         {
-
-        }
-
-        [Route("Paste")]
-        [HttpPost]
-        public IActionResult Article(PasteModel paste)
-        {
             if (ModelState.IsValid)
-                return View(paste);
-
-            string errorMessage = String.Empty;
-            
-            foreach (var item in ModelState)
             {
-                if (item.Value.ValidationState == ModelValidationState.Invalid)
-                {
-                    errorMessage += $"{errorMessage} \n Ошибки {item.Key}";
+                string hash = hashGenerator.HashForURL();
+                string? action = Url.Action("Paste", new { hash = $"{hash}" });
+                string url = $"{HttpContext.Request.Scheme}://{HttpContext.Request.Host}{action}";
 
-                    foreach (var error in item.Value.Errors)
-                    {
-                        errorMessage += $"{errorMessage} - {error.ErrorMessage}\n";
-                    }
-                }
+                ViewBag.UrlToPaste = url;
+
+                return View();
             }
 
-            return View(errorMessage);
+            if (paste.Text == null)
+            {
+                ViewBag.Text = "Введите хоть что-то... = (";
+            }
+            
+            if (paste.Title == null)
+            {
+                ViewBag.Name = "Введите название";
+            }
+
+            return View();
+        }
+
+        [Route("Paste/{hash}")]
+        public IActionResult Paste(string hash)
+        {
+            ViewBag.Hash = hash;
+
+            return View();
         }
     }
 }
