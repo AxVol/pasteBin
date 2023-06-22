@@ -1,8 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.ModelBinding;
-using Microsoft.AspNetCore.Mvc.Routing;
 using pasteBin.Areas.Home.Models;
 using pasteBin.Services;
+using pasteBin.Database;
 
 namespace pasteBin.Areas.Home.Controllers
 {
@@ -10,10 +9,12 @@ namespace pasteBin.Areas.Home.Controllers
     public class HomeController : Controller
     {
         private IHashGenerator hashGenerator;
+        private DBContext dataBase;
 
-        public HomeController(IHashGenerator HashGenerator)
+        public HomeController(IHashGenerator HashGenerator, DBContext context)
         {
             this.hashGenerator = HashGenerator;
+            this.dataBase = context;
         }
 
         [Route("")]
@@ -25,7 +26,7 @@ namespace pasteBin.Areas.Home.Controllers
         }
 
         [HttpPost]
-        public IActionResult Index(PasteModel paste)
+        public async Task<IActionResult> Index(PasteModel paste)
         {
             if (ModelState.IsValid)
             {
@@ -34,6 +35,9 @@ namespace pasteBin.Areas.Home.Controllers
                 string url = $"{HttpContext.Request.Scheme}://{HttpContext.Request.Host}{action}";
 
                 ViewBag.UrlToPaste = url;
+
+                dataBase.pasts.Add(paste);
+                await dataBase.SaveChangesAsync();
 
                 return View();
             }

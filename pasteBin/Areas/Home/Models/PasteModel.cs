@@ -12,6 +12,7 @@ namespace pasteBin.Areas.Home.Models
         public string Title { get; set; }
         [Required]
         public string Text { get; set; }
+        public int Id { get; set; }
         public string? Author { get; set; }
         public DateTime CreateAt { get; set; }
         public DateTime? DeleteDate 

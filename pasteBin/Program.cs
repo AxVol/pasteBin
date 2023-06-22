@@ -1,14 +1,15 @@
 using Microsoft.EntityFrameworkCore;
 using pasteBin.Services;
+using pasteBin.Database;
 
 var builder = WebApplication.CreateBuilder(args);
 
-//string DBConnection = builder.Configuration.GetConnectionString("DefaultConnection");
+string DBConnection = builder.Configuration.GetConnectionString("DefaultConnection");
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 builder.Services.AddTransient<IHashGenerator, HashGenerator>();
-//builder.Services.AddDbContext<>(optinos => optinos.UseSqlServer(DBConnection));
+builder.Services.AddDbContext<DBContext>(options => options.UseSqlServer(DBConnection));
 
 var app = builder.Build();
 
