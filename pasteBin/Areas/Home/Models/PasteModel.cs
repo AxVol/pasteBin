@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using Microsoft.AspNetCore.Identity;
 
 namespace pasteBin.Areas.Home.Models
 {
@@ -13,7 +14,8 @@ namespace pasteBin.Areas.Home.Models
         [Required]
         public string Text { get; set; }
         public int Id { get; set; }
-        public string? Author { get; set; }
+        public IdentityUser? Author { get; set; }
+        public int View { get; set; } = 0;
         public DateTime CreateAt { get; set; }
         public DateTime? DeleteDate 
         {

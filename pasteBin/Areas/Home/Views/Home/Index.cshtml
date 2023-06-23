@@ -5,31 +5,35 @@
 }
 
 <div>
-    <div class="text-color">
+    <div class="text-danger">
         <p> @ViewBag.Text </p>
     </div>
     <form method="post" asp-area="Home" asp-controller="Home" asp-action="Index">
         <textarea class="inputText" asp-for="Text"></textarea>
         <div class="wrap">
-            <div class="text-color block">
-                <p style="margin-top: 14px;"> Название: </p>
-                <p> Тема: </p>
-                <p> Дата удаления поста: </p>
-            </div>
             <div class="block">
-                <input asp-for="Title" class="inputText" />
-                <input asp-for="Topic" class="inputText" />
-                <input asp-for="DeleteDate" class="inputText" />
+                <div class="form-floating mb-3">
+                    <input asp-for="Title" class="form-control" />
+                    <label asp-for="Title" class="form-label">Название</label>
+                </div>
+                <div class="form-floating mb-3">
+                    <input asp-for="Topic" class="form-control" />
+                    <label asp-for="Topic" class="form-label">Тема</label>
+                </div>
+                <div class="form-floating mb-3">
+                    <input asp-for="DeleteDate" class="form-control" />
+                    <label asp-for="DeleteDate" class="form-label">Дата удаления</label>
+                </div>
             </div>
             <div class="block text-color">
-                <p style="margin-top: 14px;"> @ViewBag.Name </p>
+                <p style="margin-top: 14px;" class="text-danger"> @ViewBag.Name </p>
             </div>
         </div>
-        <button action="sumbit" class="create-btn">Создать</button>
+        <button action="sumbit" class="btn btn-lg btn-primary create-btn">Создать</button>
     </form>
     <div class="text-color">
+        <button class="btn btn-lg btn-primary create-btn">Скопировать ссылку</button>
         <a class="links" href="@ViewBag.UrlToPaste" id="url-fields"> @ViewBag.UrlToPaste </a>
-        <button class="create-btn">Скопировать ссылку</button>
         <p class="link-alert">Ссылка скопирована</p>
     </div>
 </div>

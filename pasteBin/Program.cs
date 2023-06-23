@@ -1,15 +1,19 @@
 using Microsoft.EntityFrameworkCore;
 using pasteBin.Services;
 using pasteBin.Database;
+using Microsoft.AspNetCore.Identity;
 
 var builder = WebApplication.CreateBuilder(args);
 
-string DBConnection = builder.Configuration.GetConnectionString("DefaultConnection");
-
 // Add services to the container.
-builder.Services.AddControllersWithViews();
 builder.Services.AddTransient<IHashGenerator, HashGenerator>();
-builder.Services.AddDbContext<DBContext>(options => options.UseSqlServer(DBConnection));
+
+builder.Services.AddDbContext<DBContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+builder.Services.AddDatabaseDeveloperPageExceptionFilter();
+
+builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true).AddEntityFrameworkStores<DBContext>();
+
+builder.Services.AddControllersWithViews();
 
 var app = builder.Build();
 
@@ -20,6 +24,10 @@ if (!app.Environment.IsDevelopment())
     // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
+else
+{
+    app.UseMigrationsEndPoint();
+}
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
@@ -27,6 +35,8 @@ app.UseStaticFiles();
 app.UseRouting();
 
 app.UseAuthorization();
+app.UseAuthentication();
+app.MapRazorPages();
 
 app.MapControllerRoute(
     name: "areaRoute",

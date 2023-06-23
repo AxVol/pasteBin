@@ -26,7 +26,7 @@ namespace pasteBin.Areas.Home.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Index(PasteModel paste)
+        public IActionResult Index(PasteModel paste)
         {
             if (ModelState.IsValid)
             {
@@ -36,8 +36,10 @@ namespace pasteBin.Areas.Home.Controllers
 
                 ViewBag.UrlToPaste = url;
 
-                dataBase.pasts.Add(paste);
-                await dataBase.SaveChangesAsync();
+
+                //dataBase.pasts.Add(paste);
+
+                //await dataBase.SaveChangesAsync();
 
                 return View();
             }
