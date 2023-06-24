@@ -11,7 +11,7 @@ builder.Services.AddTransient<IHashGenerator, HashGenerator>();
 builder.Services.AddDbContext<DBContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
-builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true).AddEntityFrameworkStores<DBContext>();
+builder.Services.AddDefaultIdentity<IdentityUser>().AddEntityFrameworkStores<DBContext>();
 
 builder.Services.AddControllersWithViews();
 
@@ -35,7 +35,6 @@ app.UseStaticFiles();
 app.UseRouting();
 
 app.UseAuthorization();
-app.UseAuthentication();
 app.MapRazorPages();
 
 app.MapControllerRoute(

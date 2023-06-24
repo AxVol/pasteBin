@@ -14,6 +14,7 @@ namespace pasteBin.Areas.Home.Models
         [Required]
         public string Text { get; set; }
         public int Id { get; set; }
+        public string? Hash { get; set; }
         public IdentityUser? Author { get; set; }
         public int View { get; set; } = 0;
         public DateTime CreateAt { get; set; }

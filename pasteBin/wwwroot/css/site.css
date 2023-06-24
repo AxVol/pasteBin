@@ -66,6 +66,12 @@ h1.textColor {
     height: 223px;
 }
 
+.pasteWrap {
+    width: 1310px;
+    margin: 0 auto;
+    height: 30px;
+}
+
 p.textColor {
     color: white;
 }
@@ -92,4 +98,17 @@ button.create-btn {
 a.login-link {
     text-decoration: none;
     color: white;
+}
+
+textarea.textkek {
+    background: url(http://i.imgur.com/2cOaJ.png);
+    background-attachment: local;
+    background-repeat: no-repeat;
+    background-color: #2b4462;
+    padding-left: 35px;
+    padding-top: 10px;
+    color: white;
+    width: 1300px;
+    height: 500px;
+    outline: none;
 }

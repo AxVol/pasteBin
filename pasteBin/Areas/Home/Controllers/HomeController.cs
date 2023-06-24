@@ -1,20 +1,27 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Identity;
 using pasteBin.Areas.Home.Models;
 using pasteBin.Services;
 using pasteBin.Database;
+using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.EntityFrameworkCore;
 
 namespace pasteBin.Areas.Home.Controllers
 {
     [Area("Home")]
     public class HomeController : Controller
     {
-        private IHashGenerator hashGenerator;
-        private DBContext dataBase;
+        private readonly IHashGenerator hashGenerator;
+        private readonly DBContext dataBase;
+        private readonly UserManager<IdentityUser> userManager;
+        private readonly SignInManager<IdentityUser> signInManager;
 
-        public HomeController(IHashGenerator HashGenerator, DBContext context)
+        public HomeController(IHashGenerator HashGenerator, DBContext context, SignInManager<IdentityUser> sign, UserManager<IdentityUser> user)
         {
             this.hashGenerator = HashGenerator;
             this.dataBase = context;
+            this.signInManager = sign;
+            this.userManager = user;
         }
 
         [Route("")]
@@ -22,37 +29,51 @@ namespace pasteBin.Areas.Home.Controllers
         [HttpGet]
         public IActionResult Index()
         {
-            return View();
-        }
-
-        [HttpPost]
-        public IActionResult Index(PasteModel paste)
-        {
-            if (ModelState.IsValid)
+            if (signInManager.IsSignedIn(User))
             {
-                string hash = hashGenerator.HashForURL();
-                string? action = Url.Action("Paste", new { hash = $"{hash}" });
-                string url = $"{HttpContext.Request.Scheme}://{HttpContext.Request.Host}{action}";
-
-                ViewBag.UrlToPaste = url;
-
-
-                //dataBase.pasts.Add(paste);
-
-                //await dataBase.SaveChangesAsync();
+                ViewBag.IsSignedIn = true;
 
                 return View();
             }
 
-            if (paste.Text == null)
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Index(PasteModel paste, IdentityUser user)
+        {
+            if (!ModelState.IsValid)
             {
-                ViewBag.Text = "Введите хоть что-то... = (";
+                if (paste.Text == null)
+                {
+                    ViewBag.Text = "Введите хоть что-то... = (";
+                }
+
+                if (paste.Title == null)
+                {
+                    ViewBag.Name = "Введите название";
+                }
+
+                return View();
             }
-            
-            if (paste.Title == null)
+
+            if (!signInManager.IsSignedIn(User))
             {
-                ViewBag.Name = "Введите название";
+                return View();
             }
+
+            string hash = hashGenerator.HashForURL();
+            string? action = Url.Action("Paste", new { hash = $"{hash}" });
+            string url = $"{HttpContext.Request.Scheme}://{HttpContext.Request.Host}{action}";
+
+            ViewBag.UrlToPaste = url;
+
+            paste.Hash = hash;
+            paste.Author = user;
+
+            dataBase.pasts.Add(paste);
+
+            await dataBase.SaveChangesAsync();
 
             return View();
         }
@@ -60,9 +81,15 @@ namespace pasteBin.Areas.Home.Controllers
         [Route("Paste/{hash}")]
         public IActionResult Paste(string hash)
         {
-            ViewBag.Hash = hash;
+            PasteModel? paste = dataBase.pasts.Include(a => a.Author).FirstOrDefault(p => p.Hash == hash);
 
-            return View();
+            if (paste == null)
+                return NotFound();
+
+            paste.View++;
+            dataBase.SaveChanges();
+
+            return View(paste);
         }
     }
 }

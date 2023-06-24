@@ -7,6 +7,12 @@
 <div>
     <div class="text-danger">
         <p> @ViewBag.Text </p>
+        @if (ViewBag.IsSignedIn == null)
+        {
+            <p>
+                Чтобы оставлять посты надо <a class="text-danger" asp-area="Identity" asp-page="/Account/Register">зарегистрироваться...</a>
+            </p>
+        }
     </div>
     <form method="post" asp-area="Home" asp-controller="Home" asp-action="Index">
         <textarea class="inputText" asp-for="Text"></textarea>
@@ -26,13 +32,20 @@
                 </div>
             </div>
             <div class="block text-color">
-                <p style="margin-top: 14px;" class="text-danger"> @ViewBag.Name </p>
+                <p style="margin: 14px 0px 0px 15px" class="text-danger"> @ViewBag.Name </p>
             </div>
         </div>
         <button action="sumbit" class="btn btn-lg btn-primary create-btn">Создать</button>
     </form>
     <div class="text-color">
-        <button class="btn btn-lg btn-primary create-btn">Скопировать ссылку</button>
+        @if (ViewBag.UrlToPaste == null)
+        {
+            
+        }
+        else
+        {
+            <button class="btn btn-lg btn-primary create-btn">Скопировать ссылку</button>
+        }
         <a class="links" href="@ViewBag.UrlToPaste" id="url-fields"> @ViewBag.UrlToPaste </a>
         <p class="link-alert">Ссылка скопирована</p>
     </div>

@@ -1,5 +1,18 @@
 ﻿@model PasteModel
 
 <div>
-    <h1> @ViewBag.Hash </h1>
+    <h1 class="textColor">@Model.Title</h1>
+    <h4 class="text-white"> @Model.Topic </h4>
+    <div class="pasteWrap text-white">
+        <div class="block">
+            <p> Дата создания - @Model.CreateAt.Date.ToShortDateString()</p>
+        </div>
+        <div class="block">
+            <p> Просмотры - @Model.View</p>
+        </div>
+        <div class="block">
+            <p> Автор - @Model.Author.Email </p>
+        </div>
+    </div>
+    <textarea class="textkek" readonly>@Model.Text</textarea>
 </div>
