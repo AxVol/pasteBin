@@ -1,0 +1,39 @@
+﻿@model IEnumerable<pasteBin.Areas.Home.Models.PasteModel>
+
+
+<h1 class="text-white"> Все посты на сайте </h1>
+
+<table id="table-id" class="adminTable">
+    <tr class="adminTable">
+        <th class="adminTable text-white">Названиe</th>
+        <th class="adminTable text-white">Автор</th>
+        <th class="adminTable text-white">Тема</th>
+        <th class="adminTable text-white">Дата создания</th>
+        <th class="adminTable text-white">Ссылка на пост</th>
+        <th class="adminTable text-white"></th>
+    </tr>
+    @foreach (var paste in Model)
+    {
+        <form method="post" asp-route-id="@paste.Id" asp-area="AdminPanel" asp-controller="Admin" asp-action="DeletePaste">
+            <tr class="adminTable">
+                <td class="adminTable text-white"> @paste.Title </td>
+                <td class="adminTable text-white"> @paste.Author.UserName </td>
+                <td class="adminTable text-white"> @paste.Topic </td>
+                <td class="adminTable text-white"> @paste.CreateAt.ToShortDateString() </td>
+                <td class="adminTable">
+                    <a href="@ViewBag.Host/Paste/@paste.Hash" class="text-white">
+                        @if (paste.Text.Length <= 20)
+                        {
+                            @paste.Text;
+                        }
+                        else
+                        {
+                            @paste.Text.Remove(20)
+                        }
+                    </a>
+                </td>
+                <td class="adminTable"><button type="submit" class="btn-danger">Удалить пост</button></td>
+            </tr>
+        </form>
+    }
+</table>

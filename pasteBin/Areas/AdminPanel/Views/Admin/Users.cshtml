@@ -1,0 +1,43 @@
+﻿@model IEnumerable<IdentityUser>
+
+
+<h1 class="text-white"> Все пользователи </h1>
+
+<table id="table-id" class="adminTable">
+    <thead>
+        <tr class="adminTable">
+        <th class="adminTable text-white">Никнейм</th>
+        <th class="adminTable text-white">Номер телефона</th>
+        <th class="adminTable text-white">Количество лайков</th>
+        <th class="adminTable text-white">Количество жалоб</th>
+        <th class="adminTable text-white">Кол-во комментов под его постами</th>
+        <th class="adminTable text-white"></th>
+        <th class="adminTable text-white"></th>
+    </tr>
+    </thead>
+    <tbody>
+        @foreach (var user in Model)
+        {
+            <tr class="adminTable">
+                <td class="adminTable text-white"> @user.Email </td>
+                <td class="adminTable text-white"> @user.PhoneNumber </td>
+                <td class="adminTable text-white"> заглушка </td>
+                <td class="adminTable text-white"> заглушка </td>
+                <td class="adminTable text-white"> заглушка </td>
+                @if ( await UserManager.IsInRoleAsync(user, "Admin"))
+                {
+                    <td class="adminTable text-white">Админ</td>
+                }
+                else
+                {
+                    <form method="post" asp-route-id="@user.Id" asp-area="AdminPanel" asp-controller="Admin" asp-action="UpToAdmin">
+                        <td class="adminTable"><button type="submit" class="btn-info">Повысить до админа</button></td>
+                    </form>    
+                }
+                <form method="post" asp-route-id="@user.Id" asp-area="AdminPanel" asp-controller="Admin" asp-action="DeleteUser">
+                    <td class="adminTable"><button type="submit" class="btn-danger">Заблокировать</button></td>
+                </form>
+            </tr>
+        }
+    </tbody>
+</table>

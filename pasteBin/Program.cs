@@ -11,7 +11,9 @@ builder.Services.AddTransient<IHashGenerator, HashGenerator>();
 builder.Services.AddDbContext<DBContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
-builder.Services.AddDefaultIdentity<IdentityUser>().AddEntityFrameworkStores<DBContext>();
+builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedEmail = false)
+    .AddRoles<IdentityRole>()
+    .AddEntityFrameworkStores<DBContext>();
 
 builder.Services.AddControllersWithViews();
 
@@ -44,5 +46,18 @@ app.MapControllerRoute(
 app.MapControllerRoute(
     name: "default",
     pattern: "{area=Home}/{controller=Home}/{action=Index}");
+
+using (IServiceScope scope = app.Services.CreateScope())
+{
+    RoleManager<IdentityRole> roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+
+    string[] roles = new[] {"Admin", "User" };
+
+    foreach (string role in roles)
+    {
+        if (!await roleManager.RoleExistsAsync(role))
+            await roleManager.CreateAsync(new IdentityRole(role));
+    }
+}
 
 app.Run();

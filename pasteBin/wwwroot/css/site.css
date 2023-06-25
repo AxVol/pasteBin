@@ -112,3 +112,17 @@ textarea.textkek {
     height: 500px;
     outline: none;
 }
+
+table.adminTable {
+    border: 1px solid white;
+}
+
+th.adminTable {
+    border: 1px solid white;
+    padding: 10px;
+}
+
+td.adminTable {
+    padding: 10px;
+    border: 1px solid white;
+}

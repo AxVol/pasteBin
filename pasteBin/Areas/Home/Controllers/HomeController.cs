@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Identity;
 using pasteBin.Areas.Home.Models;
 using pasteBin.Services;
 using pasteBin.Database;
-using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
 
 namespace pasteBin.Areas.Home.Controllers
@@ -27,7 +26,7 @@ namespace pasteBin.Areas.Home.Controllers
         [Route("")]
         [Route("Home")]
         [HttpGet]
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
             if (signInManager.IsSignedIn(User))
             {
@@ -40,7 +39,7 @@ namespace pasteBin.Areas.Home.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Index(PasteModel paste, IdentityUser user)
+        public async Task<IActionResult> Index(PasteModel paste)
         {
             if (!ModelState.IsValid)
             {
@@ -62,6 +61,8 @@ namespace pasteBin.Areas.Home.Controllers
                 return View();
             }
 
+            ViewBag.IsSignedIn = true;
+
             string hash = hashGenerator.HashForURL();
             string? action = Url.Action("Paste", new { hash = $"{hash}" });
             string url = $"{HttpContext.Request.Scheme}://{HttpContext.Request.Host}{action}";
@@ -69,7 +70,7 @@ namespace pasteBin.Areas.Home.Controllers
             ViewBag.UrlToPaste = url;
 
             paste.Hash = hash;
-            paste.Author = user;
+            paste.Author = await userManager.GetUserAsync(HttpContext.User);
 
             dataBase.pasts.Add(paste);
 
@@ -79,7 +80,7 @@ namespace pasteBin.Areas.Home.Controllers
         }
 
         [Route("Paste/{hash}")]
-        public IActionResult Paste(string hash)
+        public async Task<IActionResult> Paste(string hash)
         {
             PasteModel? paste = dataBase.pasts.Include(a => a.Author).FirstOrDefault(p => p.Hash == hash);
 
@@ -87,7 +88,7 @@ namespace pasteBin.Areas.Home.Controllers
                 return NotFound();
 
             paste.View++;
-            dataBase.SaveChanges();
+            await dataBase.SaveChangesAsync();
 
             return View(paste);
         }
