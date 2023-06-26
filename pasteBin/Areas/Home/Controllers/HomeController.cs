@@ -92,5 +92,15 @@ namespace pasteBin.Areas.Home.Controllers
 
             return View(paste);
         }
+
+        [Route("Paste/Popular")]
+        public async Task<IActionResult> Popular()
+        {
+            IEnumerable<PasteModel> pasts = dataBase.pasts.Include(a => a.Author).OrderByDescending(a => a.View).Take(10);
+
+            ViewBag.Host = $"{HttpContext.Request.Scheme}://{HttpContext.Request.Host}";
+
+            return View(pasts);
+        }
     }
 }

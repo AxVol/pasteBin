@@ -126,3 +126,12 @@ td.adminTable {
     padding: 10px;
     border: 1px solid white;
 }
+
+th.pasteTable {
+    padding: 20px;
+    font-size: 18px;
+}
+
+td.pasteTable {
+    padding: 20px;
+}

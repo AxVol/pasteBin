@@ -1,0 +1,25 @@
+﻿@model IEnumerable<PasteModel>
+
+<div>
+    <table>
+        <tr class="text-white pasteTable">
+            <th class="pasteTable">Название</th>
+            <th class="pasteTable">Автор</th>
+            <th class="pasteTable">Тема</th>
+            <th class="pasteTable">Просмотры</th>
+            <th class="pasteTable">Дата создания</th>
+        </tr>
+        @foreach (PasteModel paste in Model)
+        {
+            <tr class="pasteTable">
+                <td class="pasteTable">
+                    <a href="@ViewBag.Host/Paste/@paste.Hash" class="text-white">@paste.Title</a>
+                </td>
+                <td class="text-white pasteTable"> @paste.Author.UserName </td>
+                <td class="text-white pasteTable"> @paste.Topic </td>
+                <td class="text-white pasteTable"> @paste.View </td>
+                <td class="text-white pasteTable"> @paste.CreateAt </td>
+            </tr>
+        }
+    </table>
+</div>
