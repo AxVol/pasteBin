@@ -4,6 +4,10 @@ using pasteBin.Areas.Home.Models;
 using pasteBin.Services;
 using pasteBin.Database;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.CodeAnalysis.Elfie.Model.Strings;
+using System.Security.Policy;
+using Azure.Core;
+using Microsoft.AspNetCore.Http.Extensions;
 
 namespace pasteBin.Areas.Home.Controllers
 {
@@ -15,7 +19,8 @@ namespace pasteBin.Areas.Home.Controllers
         private readonly UserManager<IdentityUser> userManager;
         private readonly SignInManager<IdentityUser> signInManager;
 
-        public HomeController(IHashGenerator HashGenerator, DBContext context, SignInManager<IdentityUser> sign, UserManager<IdentityUser> user)
+        public HomeController(IHashGenerator HashGenerator, DBContext context, 
+            SignInManager<IdentityUser> sign, UserManager<IdentityUser> user)
         {
             this.hashGenerator = HashGenerator;
             this.dataBase = context;
@@ -101,6 +106,23 @@ namespace pasteBin.Areas.Home.Controllers
             ViewBag.Host = $"{HttpContext.Request.Scheme}://{HttpContext.Request.Host}";
 
             return View(pasts);
+        }
+
+        public async Task<IActionResult> AddComment(string com, string hash)
+        {
+            string pasteHash = hash;
+            IdentityUser user = await userManager.GetUserAsync(HttpContext.User);
+            PasteModel paste = await dataBase.pasts.FirstOrDefaultAsync(p => p.Hash == pasteHash);
+
+            CommentModel comment = new CommentModel();
+            comment.Author = user;
+            comment.Paste = paste;
+            comment.Comment = com;
+
+            dataBase.comments.Add(comment);
+            await dataBase.SaveChangesAsync();
+
+            return RedirectToAction("Paste", new {hash = hash});
         }
     }
 }

@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using pasteBin.Database;
 
@@ -11,9 +12,11 @@ using pasteBin.Database;
 namespace pasteBin.Migrations
 {
     [DbContext(typeof(DBContext))]
-    partial class DBContextModelSnapshot : ModelSnapshot
+    [Migration("20230627191054_MIGRATIOB_005")]
+    partial class MIGRATIOB_005
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -226,13 +229,8 @@ namespace pasteBin.Migrations
 
             modelBuilder.Entity("pasteBin.Areas.Home.Models.CommentModel", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
                     b.Property<string>("AuthorId")
+                        .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("Comment")
@@ -244,8 +242,6 @@ namespace pasteBin.Migrations
 
                     b.Property<int>("PasteId")
                         .HasColumnType("int");
-
-                    b.HasKey("Id");
 
                     b.HasIndex("AuthorId");
 
@@ -350,7 +346,9 @@ namespace pasteBin.Migrations
                 {
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityUser", "Author")
                         .WithMany()
-                        .HasForeignKey("AuthorId");
+                        .HasForeignKey("AuthorId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("pasteBin.Areas.Home.Models.PasteModel", "Paste")
                         .WithMany()

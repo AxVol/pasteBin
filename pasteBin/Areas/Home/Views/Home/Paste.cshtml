@@ -1,4 +1,5 @@
 ﻿@model PasteModel
+@inject SignInManager<IdentityUser> SignInManager
 
 <div>
     <h1 class="textColor">@Model.Title</h1>
@@ -15,4 +16,28 @@
         </div>
     </div>
     <textarea class="textkek" readonly>@Model.Text</textarea>
+    <div>
+
+    </div>
+    <div class="text-white">
+        <h1> Коментарии:</h1>
+        @if (SignInManager.IsSignedIn(User))
+        {
+            <div>
+                <h5>Оставте комментарий</h5>
+                <form method="post" asp-area="Home" asp-controller="Home" asp-action="AddComment">
+                    <input class="form-control" name="com" />
+                    <button type="submit">Отправить</button>
+                    <input style="visibility: hidden" name="hash" value="@Model.Hash"/>
+                </form>
+            </div>
+        }
+        else
+        {
+            <h3>Чтобы оставлять комментарии надо <a asp-area="Identity" asp-page="/Account/Register">зарегистрироваться</a> </h3>
+        }
+        <div>
+
+        </div>
+    </div>
 </div>
