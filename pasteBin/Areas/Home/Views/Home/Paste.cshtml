@@ -1,21 +1,21 @@
-﻿@model PasteModel
+﻿@model PasteViewModel
 @inject SignInManager<IdentityUser> SignInManager
 
 <div>
-    <h1 class="textColor">@Model.Title</h1>
-    <h4 class="text-white"> @Model.Topic </h4>
+    <h1 class="textColor">@Model.Paste.Title</h1>
+    <h4 class="text-white"> @Model.Paste.Topic </h4>
     <div class="pasteWrap text-white">
         <div class="block">
-            <p> Дата создания - @Model.CreateAt.Date.ToShortDateString()</p>
+            <p> Дата создания - @Model.Paste.CreateAt.Date.ToShortDateString()</p>
         </div>
         <div class="block">
-            <p> Просмотры - @Model.View</p>
+            <p> Просмотры - @Model.Paste.View</p>
         </div>
         <div class="block">
-            <p> Автор - @Model.Author.Email </p>
+            <p> Автор - @Model.Paste.Author.Email </p>
         </div>
     </div>
-    <textarea class="textkek" readonly>@Model.Text</textarea>
+    <textarea class="textkek" readonly>@Model.Paste.Text</textarea>
     <div>
 
     </div>
@@ -26,9 +26,9 @@
             <div>
                 <h5>Оставте комментарий</h5>
                 <form method="post" asp-area="Home" asp-controller="Home" asp-action="AddComment">
-                    <input class="form-control" name="com" />
-                    <button type="submit">Отправить</button>
-                    <input style="visibility: hidden" name="hash" value="@Model.Hash"/>
+                    <textarea class="form-control" name="com"></textarea>
+                    <button type="submit" class="btn btn-lg btn-primary create-btn">Отправить</button>
+                    <input style="visibility: hidden" name="hash" value="@Model.Paste.Hash" />
                 </form>
             </div>
         }
@@ -37,7 +37,20 @@
             <h3>Чтобы оставлять комментарии надо <a asp-area="Identity" asp-page="/Account/Register">зарегистрироваться</a> </h3>
         }
         <div>
-
+            @foreach (CommentModel comment in Model.Comments)
+            {
+                <div class="comments">
+                    <div class="comment-wrap">
+                        <div class="block">
+                            <p> @comment.Author.UserName </p>
+                        </div>
+                        <div class="block">
+                            <p> @comment.CreateAt </p>
+                        </div>
+                    </div>
+                    <p style="padding: 10px"> @comment.Comment </p>
+                </div>
+            }
         </div>
     </div>
 </div>

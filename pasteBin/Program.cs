@@ -15,6 +15,7 @@ builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.Requ
     .AddRoles<IdentityRole>()
     .AddEntityFrameworkStores<DBContext>();
 
+builder.Services.AddHostedService<TimedHostedService>();
 builder.Services.AddControllersWithViews();
 
 var app = builder.Build();

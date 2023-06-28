@@ -135,3 +135,14 @@ th.pasteTable {
 td.pasteTable {
     padding: 20px;
 }
+
+div.comments {
+    background-color: #2b4462;
+}
+
+div.comment-wrap {
+    width: 1310px;
+    margin: 10px auto;
+    height: 50px;
+    padding: 10px;
+}

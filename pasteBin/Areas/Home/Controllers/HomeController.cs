@@ -8,6 +8,7 @@ using Microsoft.CodeAnalysis.Elfie.Model.Strings;
 using System.Security.Policy;
 using Azure.Core;
 using Microsoft.AspNetCore.Http.Extensions;
+using pasteBin.Areas.Home.ViewModels;
 
 namespace pasteBin.Areas.Home.Controllers
 {
@@ -92,10 +93,17 @@ namespace pasteBin.Areas.Home.Controllers
             if (paste == null)
                 return NotFound();
 
-            paste.View++;
+            if (signInManager.IsSignedIn(User))
+            {
+                paste.View++;
+            }
+            
+            IEnumerable<CommentModel> comments = dataBase.comments.Include(a => a.Author).Where(c => c.Paste == paste);
+            PasteViewModel viewModel = new PasteViewModel(paste, comments);
+
             await dataBase.SaveChangesAsync();
 
-            return View(paste);
+            return View(viewModel);
         }
 
         [Route("Paste/Popular")]
