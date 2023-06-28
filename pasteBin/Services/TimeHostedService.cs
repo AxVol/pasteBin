@@ -41,10 +41,17 @@ namespace pasteBin.Services
             foreach (PasteModel paste in pasts)
             {
                 IEnumerable<CommentModel> comments = dataBase.comments.Where(c => c.Paste == paste);
+                IEnumerable<LikesModel> likes = dataBase.likes.Where(l => l.Paste == paste);
 
                 foreach (CommentModel comment in comments)
                 {
                     dataBase.Entry(comment).State = EntityState.Deleted;
+                    dataBase.SaveChanges();
+                }
+
+                foreach (LikesModel like in likes)
+                {
+                    dataBase.Entry(like).State = EntityState.Deleted;
                     dataBase.SaveChanges();
                 }
 

@@ -16,9 +16,45 @@
         </div>
     </div>
     <textarea class="textkek" readonly>@Model.Paste.Text</textarea>
-    <div>
-
-    </div>
+    @if(SignInManager.IsSignedIn(User))
+    {
+        <div class="like-wrap">
+            <div class="like-block">
+                <h5 class="text-white"> @Model.Likes.Count() </h5>
+            </div>
+            <div class="like-block">
+                @if(Model.IsLiked(User.Identity.Name))
+                {
+                    <form asp-area="Home" asp-controller="Home" asp-action="RemoveLike">
+                        <button class="like" type="submit" asp-for="hash">
+                            <img src="~/img/like.png" alt="Убрать лайк">
+                        </button>
+                        <input style="display: none" name="hash" value="@Model.Paste.Hash" />
+                    </form>
+                }
+                else
+                {
+                    <form asp-area="Home" asp-controller="Home" asp-action="AddLike">
+                        <button class="like" type="submit" asp-for="hash">
+                            <img src="~/img/non-like.png" alt="Лайк">
+                        </button>
+                        <input style="display: none" name="hash" value="@Model.Paste.Hash" />
+                    </form>
+                }
+            </div>
+            <div class="like-block">
+                <button class="btn-danger report">Пожаловаться на автора</button>
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="like-wrap">
+            <div class="like-block">
+                <h5 class="text-white"> Лайки - @Model.Likes.Count() </h5>
+            </div>
+        </div>
+    }
     <div class="text-white">
         <h1> Коментарии:</h1>
         @if (SignInManager.IsSignedIn(User))
@@ -28,7 +64,7 @@
                 <form method="post" asp-area="Home" asp-controller="Home" asp-action="AddComment">
                     <textarea class="form-control" name="com"></textarea>
                     <button type="submit" class="btn btn-lg btn-primary create-btn">Отправить</button>
-                    <input style="visibility: hidden" name="hash" value="@Model.Paste.Hash" />
+                    <input style="display: none" name="hash" value="@Model.Paste.Hash" />
                 </form>
             </div>
         }
@@ -42,10 +78,10 @@
                 <div class="comments">
                     <div class="comment-wrap">
                         <div class="block">
-                            <p> @comment.Author.UserName </p>
+                            <h5> @comment.Author.UserName </h5>
                         </div>
                         <div class="block">
-                            <p> @comment.CreateAt </p>
+                            <h5> @comment.CreateAt </h5>
                         </div>
                     </div>
                     <p style="padding: 10px"> @comment.Comment </p>

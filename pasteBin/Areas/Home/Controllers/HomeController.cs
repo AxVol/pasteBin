@@ -99,7 +99,9 @@ namespace pasteBin.Areas.Home.Controllers
             }
             
             IEnumerable<CommentModel> comments = dataBase.comments.Include(a => a.Author).Where(c => c.Paste == paste);
-            PasteViewModel viewModel = new PasteViewModel(paste, comments);
+            IEnumerable<LikesModel> likes = dataBase.likes.Include(p => p.Paste).Where(p => p.Paste == paste);
+            
+            PasteViewModel viewModel = new PasteViewModel(paste, comments, likes);
 
             await dataBase.SaveChangesAsync();
 
@@ -120,7 +122,7 @@ namespace pasteBin.Areas.Home.Controllers
         {
             string pasteHash = hash;
             IdentityUser user = await userManager.GetUserAsync(HttpContext.User);
-            PasteModel paste = await dataBase.pasts.FirstOrDefaultAsync(p => p.Hash == pasteHash);
+            PasteModel paste = await dataBase.pasts.FirstAsync(p => p.Hash == pasteHash);
 
             CommentModel comment = new CommentModel();
             comment.Author = user;
@@ -131,6 +133,35 @@ namespace pasteBin.Areas.Home.Controllers
             await dataBase.SaveChangesAsync();
 
             return RedirectToAction("Paste", new {hash = hash});
+        }
+
+        public async Task<IActionResult> AddLike(string hash)
+        {
+            string pasteHash = hash;
+            IdentityUser user = await userManager.GetUserAsync(HttpContext.User);
+            PasteModel paste = await dataBase.pasts.FirstAsync(p => p.Hash == pasteHash);
+
+            LikesModel like = new LikesModel();
+            like.Paste = paste;
+            like.User = user;
+
+            dataBase.likes.Add(like);
+            await dataBase.SaveChangesAsync();
+
+            return RedirectToAction("Paste", new { hash = hash });
+        }
+        
+        public async Task<IActionResult> RemoveLike(string hash)
+        {
+            string pasteHash = hash;
+            IdentityUser user = await userManager.GetUserAsync(HttpContext.User);
+            PasteModel paste = await dataBase.pasts.FirstAsync(p => p.Hash == pasteHash);
+            LikesModel like = await dataBase.likes.FirstAsync(l => l.User == user && l.Paste == paste);
+
+            dataBase.Entry(like).State = EntityState.Deleted;
+            dataBase.SaveChanges();
+
+            return RedirectToAction("Paste", new { hash = hash });
         }
     }
 }

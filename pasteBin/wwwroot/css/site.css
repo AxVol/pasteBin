@@ -146,3 +146,23 @@ div.comment-wrap {
     height: 50px;
     padding: 10px;
 }
+
+div.like-wrap {
+    height: 40px;
+    width: 1310px;
+    margin: 5px;
+}
+
+div.like-block {
+    float: left;
+    width: 100px;
+}
+
+button.like {
+    background-color: #0d1117;
+    border: 0px none;
+}
+
+button.report {
+    width: 200px;
+}
