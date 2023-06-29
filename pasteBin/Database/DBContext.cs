@@ -8,7 +8,8 @@ namespace pasteBin.Database
     {
         public DbSet<PasteModel> pasts { get; set; } = null!;
         public DbSet<CommentModel> comments { get; set; } = null!;
-        public DbSet<LikesModel> likes { get; set; }
+        public DbSet<LikesModel> likes { get; set; } = null!;
+        public DbSet<ReportModel> reports { get; set; } = null!;
 
         public DBContext(DbContextOptions<DBContext> options) : base(options) 
         {

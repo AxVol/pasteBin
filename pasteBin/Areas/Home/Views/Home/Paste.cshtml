@@ -4,6 +4,7 @@
 <div>
     <h1 class="textColor">@Model.Paste.Title</h1>
     <h4 class="text-white"> @Model.Paste.Topic </h4>
+    <h5 class="text-danger"> @ViewBag.Report </h5>
     <div class="pasteWrap text-white">
         <div class="block">
             <p> Дата создания - @Model.Paste.CreateAt.Date.ToShortDateString()</p>
@@ -43,7 +44,22 @@
                 }
             </div>
             <div class="like-block">
-                <button class="btn-danger report">Пожаловаться на автора</button>
+                <button class="btn-danger report" id="show">Пожаловаться на автора</button>
+            </div>
+        </div>
+        <div class="popup">
+            <div class="popup__container">
+                <div class="popup__wrapper">
+                    <div id="blablabla">
+                        <form role="form" asp-area="Home" asp-controller="Home" asp-action="SendReport" method="post">
+                            <label>Текст жалобы</label>
+                            <textarea name="reportText" class="report-area"></textarea>
+                            <button type="submit" class="btn btn-success">Отправить</button>
+                            <input style="display: none" name="hash" value="@Model.Paste.Hash" />
+                        </form>
+                        <button class="btn btn-danger" style="margin: 5px;" id="hide">Отмена</button>
+                    </div>
+                </div>
             </div>
         </div>
     }

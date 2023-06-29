@@ -4,10 +4,6 @@ using pasteBin.Areas.Home.Models;
 using pasteBin.Services;
 using pasteBin.Database;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.CodeAnalysis.Elfie.Model.Strings;
-using System.Security.Policy;
-using Azure.Core;
-using Microsoft.AspNetCore.Http.Extensions;
 using pasteBin.Areas.Home.ViewModels;
 
 namespace pasteBin.Areas.Home.Controllers
@@ -99,7 +95,7 @@ namespace pasteBin.Areas.Home.Controllers
             }
             
             IEnumerable<CommentModel> comments = dataBase.comments.Include(a => a.Author).Where(c => c.Paste == paste);
-            IEnumerable<LikesModel> likes = dataBase.likes.Include(p => p.Paste).Where(p => p.Paste == paste);
+            IEnumerable<LikesModel> likes = dataBase.likes.Include(p => p.Paste).Include(u => u.User).Where(p => p.Paste == paste);
             
             PasteViewModel viewModel = new PasteViewModel(paste, comments, likes);
 
@@ -120,6 +116,11 @@ namespace pasteBin.Areas.Home.Controllers
 
         public async Task<IActionResult> AddComment(string com, string hash)
         {
+            if (com == null)
+            {
+                return RedirectToAction("Paste", new { hash = hash });
+            }
+
             string pasteHash = hash;
             IdentityUser user = await userManager.GetUserAsync(HttpContext.User);
             PasteModel paste = await dataBase.pasts.FirstAsync(p => p.Hash == pasteHash);
@@ -160,6 +161,24 @@ namespace pasteBin.Areas.Home.Controllers
 
             dataBase.Entry(like).State = EntityState.Deleted;
             dataBase.SaveChanges();
+
+            return RedirectToAction("Paste", new { hash = hash });
+        }
+
+        public async Task<IActionResult> SendReport(string reportText, string hash)
+        {
+            if (reportText == null)
+                return RedirectToAction("Paste", new { hash = hash });
+
+            PasteModel paste = await dataBase.pasts.Include(a => a.Author).FirstAsync(p => p.Hash == hash);
+
+            ReportModel report = new ReportModel();
+            report.ReportText = reportText;
+            report.User = paste.Author;
+            report.Paste = paste;
+
+            dataBase.reports.Add(report);
+            await dataBase.SaveChangesAsync();
 
             return RedirectToAction("Paste", new { hash = hash });
         }

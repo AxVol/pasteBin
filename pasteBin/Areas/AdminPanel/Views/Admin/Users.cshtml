@@ -1,5 +1,4 @@
-﻿@model IEnumerable<IdentityUser>
-
+﻿@model UsersViewModel
 
 <h1 class="text-white"> Все пользователи </h1>
 
@@ -9,20 +8,18 @@
         <th class="adminTable text-white">Никнейм</th>
         <th class="adminTable text-white">Номер телефона</th>
         <th class="adminTable text-white">Количество лайков</th>
-        <th class="adminTable text-white">Количество жалоб</th>
-        <th class="adminTable text-white">Кол-во комментов под его постами</th>
+        <th class="adminTable text-white">Жалобы</th>
         <th class="adminTable text-white"></th>
         <th class="adminTable text-white"></th>
     </tr>
     </thead>
     <tbody>
-        @foreach (var user in Model)
+        @foreach (IdentityUser user in Model.Users)
         {
             <tr class="adminTable">
                 <td class="adminTable text-white"> @user.Email </td>
                 <td class="adminTable text-white"> @user.PhoneNumber </td>
-                <td class="adminTable text-white"> заглушка </td>
-                <td class="adminTable text-white"> заглушка </td>
+                <td class="adminTable text-white"> @Model.GetLikesCount(user) </td>
                 <td class="adminTable text-white"> заглушка </td>
                 @if ( await UserManager.IsInRoleAsync(user, "Admin"))
                 {

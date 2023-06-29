@@ -42,6 +42,7 @@ namespace pasteBin.Services
             {
                 IEnumerable<CommentModel> comments = dataBase.comments.Where(c => c.Paste == paste);
                 IEnumerable<LikesModel> likes = dataBase.likes.Where(l => l.Paste == paste);
+                IEnumerable<ReportModel> reports = dataBase.reports.Where(r => r.Paste == paste);
 
                 foreach (CommentModel comment in comments)
                 {
@@ -55,10 +56,16 @@ namespace pasteBin.Services
                     dataBase.SaveChanges();
                 }
 
+                foreach (ReportModel report in reports)
+                {
+                    dataBase.Entry(report).State = EntityState.Deleted;
+                    dataBase.SaveChanges();
+                }
+
                 dataBase.Entry(paste).State = EntityState.Deleted;
                 dataBase.SaveChanges();
 
-                logger.LogInformation($"Удалили - {paste.Title}");
+                logger.LogInformation($"Удалил - {paste.Title}");
             }
         }
 

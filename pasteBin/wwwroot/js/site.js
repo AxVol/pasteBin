@@ -25,3 +25,18 @@ $(function () {
         $(".link-alert").fadeIn("slow");
     });
 });
+
+const show_button = document.querySelector('#show');
+const hide_button = document.querySelector('#hide');
+const form = document.querySelector('#blablabla');
+const popup = document.querySelector('.popup');
+
+show_button.addEventListener('click', () => {
+    form.classList.add('open');
+    popup.classList.add('popup_open');
+});
+
+hide_button.addEventListener('click', () => {
+    form.classList.remove('open');
+    popup.classList.remove('popup_open');
+});
