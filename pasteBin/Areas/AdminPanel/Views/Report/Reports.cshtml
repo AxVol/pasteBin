@@ -14,10 +14,10 @@
             {
                 <tr class="pasteTable">
                     <td class="text-white pasteTable"><h5>@report.ReportText</h5></td>
-                    <form method="post" asp-route-id="@report.User.Id" asp-area="AdminPanel" asp-controller="Admin" asp-action="DeleteUser">
+                    <form method="post" asp-route-id="@report.User.Id" asp-area="AdminPanel" asp-controller="User" asp-action="DeleteUser">
                         <td class="pasteTable"><button type="submit" class="btn-danger">Заблокировать</button></td>
                     </form>
-                    <form method="post" asp-route-id="@report.Id" asp-area="AdminPanel" asp-controller="Admin" asp-action="RemoveReport">
+                    <form method="post" asp-route-id="@report.Id" asp-area="AdminPanel" asp-controller="Report" asp-action="RemoveReport">
                         <td class="pasteTable"><button type="submit" class="btn-danger">Отменить</button></td>
                     </form>
                 </tr>
@@ -26,6 +26,6 @@
     }
     else
     {
-        <h1 class="text-white">Жалобы закончились, <a asp-area="AdminPanel" asp-controller="Admin" asp-action="Users"ы>вернуться назад?</a></h1>
+        <h1 class="text-white">Жалобы закончились, <a asp-area="AdminPanel" asp-controller="User" asp-action="Users"ы>вернуться назад?</a></h1>
     }
 </div>

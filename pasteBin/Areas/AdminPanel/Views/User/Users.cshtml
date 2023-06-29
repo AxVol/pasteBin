@@ -22,7 +22,7 @@
                 <td class="adminTable text-white"> @Model.GetLikesCount(user) </td>
                 @if (Model.HaveReports(user))
                 {
-                    <form method="post" asp-route-id="@user.Id" asp-area="AdminPanel" asp-controller="Admin" asp-action="Reports">
+                    <form method="post" asp-route-id="@user.Id" asp-area="AdminPanel" asp-controller="Report" asp-action="Reports">
                         <td class="adminTable"><button type="submit" class="btn-danger">Посмотреть жалобы</button></td>
                     </form>
                 }
@@ -36,11 +36,11 @@
                 }
                 else
                 {
-                    <form method="post" asp-route-id="@user.Id" asp-area="AdminPanel" asp-controller="Admin" asp-action="UpToAdmin">
+                    <form method="post" asp-route-id="@user.Id" asp-area="AdminPanel" asp-controller="User" asp-action="UpToAdmin">
                         <td class="adminTable"><button type="submit" class="btn-info">Повысить до админа</button></td>
                     </form>    
                 }
-                <form method="post" asp-route-id="@user.Id" asp-area="AdminPanel" asp-controller="Admin" asp-action="DeleteUser">
+                <form method="post" asp-route-id="@user.Id" asp-area="AdminPanel" asp-controller="User" asp-action="DeleteUser">
                     <td class="adminTable"><button type="submit" class="btn-danger">Заблокировать</button></td>
                 </form>
             </tr>

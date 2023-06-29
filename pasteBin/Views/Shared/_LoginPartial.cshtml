@@ -8,28 +8,28 @@
     @if (this.User.IsInRole("Admin"))
     {
         <li class="nav-item">
-            <a class="nav-link text-white" asp-area="AdminPanel" asp-controller="Admin" asp-action="Paste">Модерация статей</a>
+            <a class="nav-link text-white" asp-area="AdminPanel" asp-controller="Paste" asp-action="Paste">Модерация статей</a>
         </li>
         <li class="nav-item">
-            <a class="nav-link text-white" asp-area="AdminPanel" asp-controller="Admin" asp-action="Users"> Все пользователи </a>
+            <a class="nav-link text-white" asp-area="AdminPanel" asp-controller="User" asp-action="Users"> Все пользователи </a>
         </li>
     }
     <li class="nav-item">
-        <a class="nav-link text-white" asp-area="Identity" asp-page="/Account/Manage/Index" title="Manage">Hello @User.Identity?.Name!</a>
+        <a class="nav-link text-white" asp-area="Identity" asp-page="/Account/Manage/Index" title="Manage">Привет @User.Identity?.Name!</a>
     </li>
     <li class="nav-item">
         <form class="form-inline" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "Home" })">
-            <button type="submit" class="nav-link btn btn-link text-white">Logout</button>
+            <button type="submit" class="nav-link btn btn-link text-white">Выйти</button>
         </form>
     </li>
 }
 else
 {
     <li class="nav-item">
-        <a class="links" asp-area="Identity" asp-page="/Account/Register">Register</a>
+        <a class="links" asp-area="Identity" asp-page="/Account/Register">Зарегистрироваться</a>
     </li>
     <li class="nav-item">
-        <a class="links" asp-area="Identity" asp-page="/Account/Login">Login</a>
+        <a class="links" asp-area="Identity" asp-page="/Account/Login">Войти</a>
     </li>
 }
 </ul>

@@ -15,5 +15,35 @@ namespace pasteBin.Database
         {
             
         }
+
+        public async Task UpdateTables(IEnumerable<CommentModel> comments, IEnumerable<LikesModel> likes,
+            IEnumerable<ReportModel> reports, IEnumerable<PasteModel> pasts)
+        {
+            foreach (CommentModel comment in comments)
+            {
+                this.Entry(comment).State = EntityState.Deleted;
+                await this.SaveChangesAsync();
+            }
+
+            foreach (LikesModel like in likes)
+            {
+                this.Entry(like).State = EntityState.Deleted;
+                await this.SaveChangesAsync();
+            }
+
+            foreach (ReportModel report in reports)
+            {
+                this.Entry(report).State = EntityState.Deleted;
+                await this.SaveChangesAsync();
+            }
+
+            foreach (PasteModel paste in pasts)
+            {
+                this.Entry(paste).State = EntityState.Deleted;
+                await this.SaveChangesAsync();
+            }
+
+            await Task.CompletedTask;
+        }
     }
 }

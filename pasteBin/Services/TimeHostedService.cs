@@ -34,7 +34,7 @@ namespace pasteBin.Services
             UpdateCheatService();
         }
 
-        private void DeleteTimePasts()
+        private async Task DeleteTimePasts()
         {
             IEnumerable<PasteModel> pasts = dataBase.pasts.Where(p => p.DeleteDate < DateTime.Now).ToList();
 
@@ -44,26 +44,7 @@ namespace pasteBin.Services
                 IEnumerable<LikesModel> likes = dataBase.likes.Where(l => l.Paste == paste);
                 IEnumerable<ReportModel> reports = dataBase.reports.Where(r => r.Paste == paste);
 
-                foreach (CommentModel comment in comments)
-                {
-                    dataBase.Entry(comment).State = EntityState.Deleted;
-                    dataBase.SaveChanges();
-                }
-
-                foreach (LikesModel like in likes)
-                {
-                    dataBase.Entry(like).State = EntityState.Deleted;
-                    dataBase.SaveChanges();
-                }
-
-                foreach (ReportModel report in reports)
-                {
-                    dataBase.Entry(report).State = EntityState.Deleted;
-                    dataBase.SaveChanges();
-                }
-
-                dataBase.Entry(paste).State = EntityState.Deleted;
-                dataBase.SaveChanges();
+                await dataBase.UpdateTables(comments, likes, reports, new List<PasteModel> { paste });
 
                 logger.LogInformation($"Удалил - {paste.Title}");
             }
