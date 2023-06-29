@@ -1,0 +1,31 @@
+﻿@model IEnumerable<ReportModel>
+
+<div>
+    @if (Model.Any())
+    {
+        <h1 class="text-white">Жалобы на - @Model.First().User.UserName</h1>
+        <table>
+            <tr class="text-white pasteTable">
+                <th class="pasteTable">Текст жалобы</th>
+                <th class="pasteTable"></th>
+                <th class="pasteTable"></th>
+            </tr>
+            @foreach (ReportModel report in Model)
+            {
+                <tr class="pasteTable">
+                    <td class="text-white pasteTable"><h5>@report.ReportText</h5></td>
+                    <form method="post" asp-route-id="@report.User.Id" asp-area="AdminPanel" asp-controller="Admin" asp-action="DeleteUser">
+                        <td class="pasteTable"><button type="submit" class="btn-danger">Заблокировать</button></td>
+                    </form>
+                    <form method="post" asp-route-id="@report.Id" asp-area="AdminPanel" asp-controller="Admin" asp-action="RemoveReport">
+                        <td class="pasteTable"><button type="submit" class="btn-danger">Отменить</button></td>
+                    </form>
+                </tr>
+            }
+        </table>
+    }
+    else
+    {
+        <h1 class="text-white">Жалобы закончились, <a asp-area="AdminPanel" asp-controller="Admin" asp-action="Users"ы>вернуться назад?</a></h1>
+    }
+</div>

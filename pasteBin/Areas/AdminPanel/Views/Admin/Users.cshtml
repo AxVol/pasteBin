@@ -20,7 +20,16 @@
                 <td class="adminTable text-white"> @user.Email </td>
                 <td class="adminTable text-white"> @user.PhoneNumber </td>
                 <td class="adminTable text-white"> @Model.GetLikesCount(user) </td>
-                <td class="adminTable text-white"> заглушка </td>
+                @if (Model.HaveReports(user))
+                {
+                    <form method="post" asp-route-id="@user.Id" asp-area="AdminPanel" asp-controller="Admin" asp-action="Reports">
+                        <td class="adminTable"><button type="submit" class="btn-danger">Посмотреть жалобы</button></td>
+                    </form>
+                }
+                else
+                {
+                    <td class="adminTable text-white"> Жалобы отсутствуют </td>   
+                }
                 @if ( await UserManager.IsInRoleAsync(user, "Admin"))
                 {
                     <td class="adminTable text-white">Админ</td>

@@ -28,5 +28,15 @@ namespace pasteBin.Areas.AdminPanel.ViewModels
 
             return count;
         }
+
+        public bool HaveReports(IdentityUser user)
+        {
+            IEnumerable<ReportModel> reports = dataBase.reports.Where(r => r.User == user);
+
+            if (reports.Any())
+                return true;
+
+            return false;
+        }
     }
 }
