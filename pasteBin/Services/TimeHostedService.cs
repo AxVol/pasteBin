@@ -1,4 +1,6 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System.Text.Json;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Distributed;
 using pasteBin.Areas.Home.Models;
 using pasteBin.Database;
 
@@ -8,18 +10,21 @@ namespace pasteBin.Services
     {
         private readonly ILogger<TimedHostedService> logger;
         private readonly DBContext dataBase;
+        private readonly IDistributedCache cache;
+        private readonly int refreshInterval = 1;
         private Timer? timer = null;
 
         public TimedHostedService(ILogger<TimedHostedService> log, IServiceScopeFactory factory)
         {
             logger = log;
             dataBase = factory.CreateScope().ServiceProvider.GetRequiredService<DBContext>();
+            cache = factory.CreateScope().ServiceProvider.GetRequiredService<IDistributedCache>();
         }
 
         public Task StartAsync(CancellationToken stoppingToken)
         {
             timer = new Timer(DoWork, null, TimeSpan.Zero,
-                TimeSpan.FromMinutes(1));
+                TimeSpan.FromMinutes(refreshInterval));
 
             return Task.CompletedTask;
         }
@@ -28,7 +33,7 @@ namespace pasteBin.Services
         {
             logger.LogInformation("-------------Очищаю базу данных от ненужных постов и связей-------------");
             DeleteTimePasts();
-            logger.LogInformation("---------Перезаписываю кеш-----------");
+            logger.LogInformation("---------Обновляю кеш-----------");
             UpdateCache();
             logger.LogInformation("-----------Обноваляю сервис против накрутки-------------");
             UpdateCheatService();
@@ -53,14 +58,22 @@ namespace pasteBin.Services
 
         private void UpdateCache()
         {
-            logger.LogInformation($"{nameof(UpdateCache)}");
+            IEnumerable<PasteModel> pasts = dataBase.pasts.Include(p => p.Author).OrderByDescending(p => p.View).Take(2);
+
+            foreach (PasteModel paste in pasts)
+            {
+                string pasteString = JsonSerializer.Serialize(paste);
+
+                cache.SetString(paste.Hash, pasteString, new DistributedCacheEntryOptions
+                {
+                    AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(22)
+                });
+            }
         }
 
-        private async Task UpdateCheatService()
+        private void UpdateCheatService()
         {
-            await dataBase.viewCheats.ExecuteDeleteAsync();
-
-            await Task.CompletedTask;
+            dataBase.viewCheats.ExecuteDelete();
         }
 
         public Task StopAsync(CancellationToken stoppingToken)
