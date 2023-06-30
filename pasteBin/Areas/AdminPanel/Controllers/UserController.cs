@@ -39,8 +39,9 @@ namespace pasteBin.Areas.AdminPanel.Controllers
                 IEnumerable<CommentModel> comments = db.comments.Where(c => c.Author == user).ToList();
                 IEnumerable<LikesModel> likes = db.likes.Where(l => l.User == user).ToList();
                 IEnumerable<ReportModel> reports = db.reports.Where(r => r.User == user).ToList();
+                IEnumerable<ViewCheatModel> cheats = db.viewCheats.Where(v => v.User == user).ToList();
 
-                await db.UpdateTables(comments, likes, reports, pasts);
+                await db.UpdateTables(comments, likes, reports, pasts, cheats);
 
                 IdentityResult result = await userManager.DeleteAsync(user);
             }

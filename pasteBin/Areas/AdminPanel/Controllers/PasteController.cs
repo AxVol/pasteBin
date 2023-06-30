@@ -40,8 +40,9 @@ namespace pasteBin.Areas.AdminPanel.Controllers
             IEnumerable<CommentModel> comments = db.comments.Where(c => c.Paste.Id == paste.Id).ToList();
             IEnumerable<LikesModel> likes = db.likes.Where(l => l.Paste.Id == paste.Id).ToList();
             IEnumerable<ReportModel> reports = db.reports.Where(r => r.Paste.Id == paste.Id).ToList();
+            IEnumerable<ViewCheatModel> cheats = db.viewCheats.Where(c => c.Paste.Id == paste.Id).ToList();
 
-            await db.UpdateTables(comments, likes, reports, new List<PasteModel> { paste });
+            await db.UpdateTables(comments, likes, reports, new List<PasteModel> { paste }, cheats);
 
             return RedirectToAction("Paste");
         }

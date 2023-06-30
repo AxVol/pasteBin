@@ -39,7 +39,20 @@ namespace pasteBin.Areas.Home.Controllers
 
             if (signInManager.IsSignedIn(User))
             {
-                paste.View++;
+                IdentityUser user = await userManager.GetUserAsync(HttpContext.User);
+
+                IEnumerable<ViewCheatModel> cheat = dataBase.viewCheats.Include(u => u.User).
+                    Where(c => c.Paste == paste && c.User == user);
+
+                if (!cheat.Any())
+                    paste.View++;
+
+                ViewCheatModel viewCheat = new ViewCheatModel();
+                viewCheat.Paste = paste;
+                viewCheat.User = user;
+
+                dataBase.viewCheats.Add(viewCheat);
+                await dataBase.SaveChangesAsync();
             }
 
             return View(viewModel);

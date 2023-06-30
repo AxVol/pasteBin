@@ -43,8 +43,9 @@ namespace pasteBin.Services
                 IEnumerable<CommentModel> comments = dataBase.comments.Where(c => c.Paste == paste);
                 IEnumerable<LikesModel> likes = dataBase.likes.Where(l => l.Paste == paste);
                 IEnumerable<ReportModel> reports = dataBase.reports.Where(r => r.Paste == paste);
+                IEnumerable<ViewCheatModel> viewCheats = dataBase.viewCheats.Where(v => v.Paste == paste);
 
-                await dataBase.UpdateTables(comments, likes, reports, new List<PasteModel> { paste });
+                await dataBase.UpdateTables(comments, likes, reports, new List<PasteModel> { paste }, viewCheats);
 
                 logger.LogInformation($"Удалил - {paste.Title}");
             }
@@ -55,9 +56,11 @@ namespace pasteBin.Services
             logger.LogInformation($"{nameof(UpdateCache)}");
         }
 
-        private void UpdateCheatService()
+        private async Task UpdateCheatService()
         {
-            logger.LogInformation($"{nameof(UpdateCheatService)}");
+            await dataBase.viewCheats.ExecuteDeleteAsync();
+
+            await Task.CompletedTask;
         }
 
         public Task StopAsync(CancellationToken stoppingToken)
