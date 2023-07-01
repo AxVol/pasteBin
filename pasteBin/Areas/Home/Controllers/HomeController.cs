@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Identity;
-using pasteBin.Services;
 using pasteBin.Database;
 using pasteBin.Areas.Home.Models;
+using pasteBin.Services.Interfaces;
 
 namespace pasteBin.Areas.Home.Controllers
 {
@@ -73,7 +73,6 @@ namespace pasteBin.Areas.Home.Controllers
             paste.Author = await userManager.GetUserAsync(HttpContext.User);
 
             dataBase.pasts.Add(paste);
-
             await dataBase.SaveChangesAsync();
 
             return View();

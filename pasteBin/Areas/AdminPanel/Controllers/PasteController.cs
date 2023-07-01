@@ -2,10 +2,9 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using pasteBin.Areas.AdminPanel.ViewModels;
 using pasteBin.Areas.Home.Models;
 using pasteBin.Database;
-using pasteBin.Services;
+using pasteBin.Services.Interfaces;
 
 namespace pasteBin.Areas.AdminPanel.Controllers
 {
@@ -16,10 +15,10 @@ namespace pasteBin.Areas.AdminPanel.Controllers
         private readonly DBContext db;
         private readonly UserManager<IdentityUser> userManager;
         private readonly RoleManager<IdentityRole> roleManager;
-        private readonly IRedis redis;
+        private readonly IRedisCache redis;
 
         public PasteController(DBContext contex, UserManager<IdentityUser> uManager, 
-            RoleManager<IdentityRole> rManager, IRedis cache)
+            RoleManager<IdentityRole> rManager, IRedisCache cache)
         {
             db = contex;
             userManager = uManager;
@@ -47,6 +46,7 @@ namespace pasteBin.Areas.AdminPanel.Controllers
             IEnumerable<ViewCheatModel> cheats = db.viewCheats.Where(c => c.Paste.Hash == paste.Hash).ToList();
 
             db.UpdateTables(comments, likes, reports, new List<PasteModel> { paste }, cheats);
+            // в случае если пост остался так же в кеше чтобы не дожидаться его обновления
             redis.Remove(new List<PasteModel> { paste });
 
             return RedirectToAction("Paste");

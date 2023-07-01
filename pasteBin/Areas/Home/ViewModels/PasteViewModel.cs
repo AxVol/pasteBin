@@ -1,6 +1,4 @@
-﻿using Microsoft.AspNetCore.Identity;
-using pasteBin.Areas.Home.Models;
-using System.Security.Claims;
+﻿using pasteBin.Areas.Home.Models;
 
 namespace pasteBin.Areas.Home.ViewModels
 {

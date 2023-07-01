@@ -1,10 +1,9 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using pasteBin.Areas.AdminPanel.ViewModels;
 using pasteBin.Areas.Home.Models;
 using pasteBin.Database;
-using pasteBin.Services;
+using pasteBin.Services.Interfaces;
 
 namespace pasteBin.Areas.AdminPanel.Controllers
 {
@@ -13,9 +12,9 @@ namespace pasteBin.Areas.AdminPanel.Controllers
     {
         private readonly DBContext db;
         private readonly UserManager<IdentityUser> userManager;
-        private readonly IRedis redis;
+        private readonly IRedisCache redis;
 
-        public UserController(DBContext contex, UserManager<IdentityUser> uManager, IRedis cache)
+        public UserController(DBContext contex, UserManager<IdentityUser> uManager, IRedisCache cache)
         {
             db = contex;
             userManager = uManager;

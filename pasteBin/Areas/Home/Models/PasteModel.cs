@@ -5,6 +5,7 @@ namespace pasteBin.Areas.Home.Models
 {
     public class PasteModel
     {
+        // сдиг ставиться в том случае, если дата не была передана или установлена ниже нынешней (Устанавливается в днях)
         private readonly int offsetDelete = 30;
         private string topic;
         private DateTime? deleteDate;

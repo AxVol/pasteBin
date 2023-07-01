@@ -1,12 +1,10 @@
-﻿using System.Text.Json;
-using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Caching.Distributed;
 using pasteBin.Database;
 using pasteBin.Areas.Home.Models;
 using pasteBin.Areas.Home.ViewModels;
-using pasteBin.Services;
+using pasteBin.Services.Interfaces;
 
 namespace pasteBin.Areas.Home.Controllers
 {
@@ -16,10 +14,10 @@ namespace pasteBin.Areas.Home.Controllers
         private readonly DBContext dataBase;
         private readonly UserManager<IdentityUser> userManager;
         private readonly SignInManager<IdentityUser> signInManager;
-        private readonly IRedis redis;
+        private readonly IRedisCache redis;
 
         public PasteController(DBContext context, SignInManager<IdentityUser> sign, 
-            UserManager<IdentityUser> user, IRedis cacheDistributed)
+            UserManager<IdentityUser> user, IRedisCache cacheDistributed)
         {
             dataBase = context;
             signInManager = sign;
@@ -133,6 +131,7 @@ namespace pasteBin.Areas.Home.Controllers
             return RedirectToAction("Paste", new { hash });
         }
 
+        // кеш-статус нужен для определения где обнавлять данные, в кеше или базе данных
         private async Task AddViews(PasteModel paste, string cacheStatus)
         {
             IdentityUser user = await userManager.GetUserAsync(HttpContext.User);

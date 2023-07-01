@@ -1,8 +1,8 @@
 ﻿using pasteBin.Areas.Home.Models;
 
-namespace pasteBin.Services
+namespace pasteBin.Services.Interfaces
 {
-    public interface IRedis
+    public interface IRedisCache
     {
         PasteModel? Get(string key);
         void Set(int timeInterval, IEnumerable<PasteModel> pasts);

@@ -1,4 +1,4 @@
-﻿namespace pasteBin.Services
+﻿namespace pasteBin.Services.Interfaces
 {
     public interface IHashGenerator
     {

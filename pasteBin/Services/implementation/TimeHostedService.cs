@@ -2,29 +2,29 @@
 using Microsoft.EntityFrameworkCore;
 using pasteBin.Areas.Home.Models;
 using pasteBin.Database;
+using pasteBin.Services.Interfaces;
 
-namespace pasteBin.Services
+namespace pasteBin.Services.implementation
 {
     public class TimedHostedService : IHostedService, IDisposable
     {
         private readonly ILogger<TimedHostedService> logger;
-        private readonly DBContext dataBase;
-        private readonly IRedis redis;
+        private readonly IRedisCache redis;
         private readonly int refreshInterval = 1;
-        private readonly int cacheRefreshInterval = 1;
+        private readonly DBContext dataBase;
         private Timer? timer = null;
 
         public TimedHostedService(ILogger<TimedHostedService> log, IServiceScopeFactory factory)
         {
             logger = log;
             dataBase = factory.CreateScope().ServiceProvider.GetRequiredService<DBContext>();
-            redis = factory.CreateScope().ServiceProvider.GetRequiredService<IRedis>();
+            redis = factory.CreateScope().ServiceProvider.GetRequiredService<IRedisCache>();
         }
 
         public Task StartAsync(CancellationToken stoppingToken)
         {
             timer = new Timer(DoWork, null, TimeSpan.Zero,
-                TimeSpan.FromMinutes(refreshInterval));
+                TimeSpan.FromDays(refreshInterval));
 
             return Task.CompletedTask;
         }
@@ -39,6 +39,7 @@ namespace pasteBin.Services
             UpdateCheatService();
         }
 
+        // Удаляет посты у которых настала дата удаления
         private void DeleteTimePasts()
         {
             IEnumerable<PasteModel> pasts = dataBase.pasts.Where(p => p.DeleteDate < DateTime.Now).ToList();
@@ -52,10 +53,10 @@ namespace pasteBin.Services
 
                 dataBase.UpdateTables(comments, likes, reports, new List<PasteModel> { paste }, viewCheats);
 
-                redis.Remove(new List<PasteModel> { paste });
-
                 logger.LogInformation($"Удалил - {paste.Title}");
             }
+
+            redis.Remove(pasts);
         }
 
         private void UpdateCache()
@@ -64,9 +65,11 @@ namespace pasteBin.Services
 
             IEnumerable<PasteModel> pasts = dataBase.pasts.Include(p => p.Author).OrderByDescending(p => p.View).Take(10);
 
-            redis.Set(cacheRefreshInterval, pasts);
+            redis.Set(refreshInterval, pasts);
         }
 
+        /* по средствам базы данных и отдельной в ней таблицы связанной с юзером и постом, отслеживаю смотрел ли
+           пользователь в течении дня пост, чтобы не начислять лишние просмотры */
         private void UpdateCheatService()
         {
             dataBase.viewCheats.ExecuteDelete();

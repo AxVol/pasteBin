@@ -1,7 +1,8 @@
 using Microsoft.EntityFrameworkCore;
-using pasteBin.Services;
-using pasteBin.Database;
 using Microsoft.AspNetCore.Identity;
+using pasteBin.Services.Interfaces;
+using pasteBin.Services.implementation;
+using pasteBin.Database;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -26,7 +27,7 @@ builder.Services.AddStackExchangeRedisCache(options =>
     options.InstanceName = "local";
 });
 
-builder.Services.AddTransient<IRedis, RedisService>();
+builder.Services.AddTransient<IRedisCache, RedisService>();
 builder.Services.AddHostedService<TimedHostedService>();
 builder.Services.AddControllersWithViews();
 

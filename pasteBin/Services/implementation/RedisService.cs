@@ -1,17 +1,14 @@
 ﻿using System.Text.Json;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Microsoft.Extensions.Caching.Distributed;
-using pasteBin.Areas.Home.Models;
-using pasteBin.Database;
 using StackExchange.Redis;
+using pasteBin.Areas.Home.Models;
+using pasteBin.Services.Interfaces;
 
-namespace pasteBin.Services
+namespace pasteBin.Services.implementation
 {
-    public class RedisService : IRedis
+    public class RedisService : IRedisCache
     {
         private readonly IDistributedCache cache;
-        private readonly DBContext database;
         private readonly int timeInterval = 1;
 
         public PasteModel? Get(string key)
@@ -40,7 +37,7 @@ namespace pasteBin.Services
 
             foreach (string key in keysList)
             {
-                PasteModel paste = Get(key.Replace("local", String.Empty));
+                PasteModel paste = Get(key.Replace("local", string.Empty));
 
                 pasts.Add(paste);
             }
@@ -62,7 +59,7 @@ namespace pasteBin.Services
 
                     cache.SetString(paste.Hash, pasteString, new DistributedCacheEntryOptions
                     {
-                        AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(timeInterval)
+                        AbsoluteExpirationRelativeToNow = TimeSpan.FromDays(timeInterval)
                     });
                 }
             }
@@ -76,7 +73,7 @@ namespace pasteBin.Services
 
             cache.SetString(paste.Hash, pasteString, new DistributedCacheEntryOptions
             {
-                AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(timeInterval)
+                AbsoluteExpirationRelativeToNow = TimeSpan.FromDays(timeInterval)
             });
         }
 
@@ -94,7 +91,6 @@ namespace pasteBin.Services
         public RedisService(IServiceScopeFactory factory)
         {
             cache = factory.CreateScope().ServiceProvider.GetRequiredService<IDistributedCache>();
-            database = factory.CreateScope().ServiceProvider.GetRequiredService<DBContext>();
         }
     }
 }

@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using pasteBin.Areas.Home.Models;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using pasteBin.Areas.Home.Models;
 
 namespace pasteBin.Database
 {
@@ -12,11 +12,7 @@ namespace pasteBin.Database
         public DbSet<ReportModel> reports { get; set; } = null!;
         public DbSet<ViewCheatModel> viewCheats { get; set; } = null!;
 
-        public DBContext(DbContextOptions<DBContext> options) : base(options) 
-        {
-            
-        }
-
+        // Обновляет в базе данных, данные из кеша для их актуальности
         public void UpdatePasteViews(IEnumerable<PasteModel> past)
         {
             foreach (PasteModel paste in past)
@@ -32,6 +28,7 @@ namespace pasteBin.Database
             }
         }
 
+        // чистить таблицы и её зависимости от переданных в списках данных
         public void UpdateTables(IEnumerable<CommentModel> comments, IEnumerable<LikesModel> likes,
             IEnumerable<ReportModel> reports, IEnumerable<PasteModel> pasts, IEnumerable<ViewCheatModel> viewCheat)
         {
@@ -64,6 +61,11 @@ namespace pasteBin.Database
                 this.Entry(paste).State = EntityState.Deleted;
                 this.SaveChanges();
             }
+        }
+
+        public DBContext(DbContextOptions<DBContext> options) : base(options)
+        {
+
         }
     }
 }
