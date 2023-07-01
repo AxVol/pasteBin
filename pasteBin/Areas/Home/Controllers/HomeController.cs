@@ -64,7 +64,7 @@ namespace pasteBin.Areas.Home.Controllers
             ViewBag.IsSignedIn = true;
 
             string hash = hashGenerator.HashForURL();
-            string? action = Url.Action("Paste", new { hash = $"{hash}" });
+            string? action = Url.RouteUrl( new { controller = "Paste", action = "paste",  hash = $"{hash}" });
             string url = $"{HttpContext.Request.Scheme}://{HttpContext.Request.Host}{action}";
 
             ViewBag.UrlToPaste = url;

@@ -26,6 +26,7 @@ builder.Services.AddStackExchangeRedisCache(options =>
     options.InstanceName = "local";
 });
 
+builder.Services.AddTransient<IRedis, RedisService>();
 builder.Services.AddHostedService<TimedHostedService>();
 builder.Services.AddControllersWithViews();
 

@@ -1,7 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using pasteBin.Areas.Home.Models;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
-using System.Composition;
 
 namespace pasteBin.Database
 {
@@ -18,40 +17,53 @@ namespace pasteBin.Database
             
         }
 
-        public async Task UpdateTables(IEnumerable<CommentModel> comments, IEnumerable<LikesModel> likes,
+        public void UpdatePasteViews(IEnumerable<PasteModel> past)
+        {
+            foreach (PasteModel paste in past)
+            {
+                PasteModel trackedPaste = this.pasts.Find(paste.Id);
+
+                if (!(paste.View == trackedPaste.View))
+                {
+                    trackedPaste.View = paste.View;
+
+                    this.SaveChanges();
+                }
+            }
+        }
+
+        public void UpdateTables(IEnumerable<CommentModel> comments, IEnumerable<LikesModel> likes,
             IEnumerable<ReportModel> reports, IEnumerable<PasteModel> pasts, IEnumerable<ViewCheatModel> viewCheat)
         {
             foreach (CommentModel comment in comments)
             {
                 this.Entry(comment).State = EntityState.Deleted;
-                await this.SaveChangesAsync();
+                this.SaveChanges();
             }
 
             foreach (LikesModel like in likes)
             {
                 this.Entry(like).State = EntityState.Deleted;
-                await this.SaveChangesAsync();
+                this.SaveChanges();
             }
 
             foreach (ReportModel report in reports)
             {
                 this.Entry(report).State = EntityState.Deleted;
-                await this.SaveChangesAsync();
+                this.SaveChanges();
             }
 
             foreach (ViewCheatModel cheat in viewCheat)
             {
                 this.Entry(cheat).State = EntityState.Deleted;
-                await this.SaveChangesAsync();
+                this.SaveChanges();
             }
 
             foreach (PasteModel paste in pasts)
             {
                 this.Entry(paste).State = EntityState.Deleted;
-                await this.SaveChangesAsync();
+                this.SaveChanges();
             }
-
-            await Task.CompletedTask;
         }
     }
 }

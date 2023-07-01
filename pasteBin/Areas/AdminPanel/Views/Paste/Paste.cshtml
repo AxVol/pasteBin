@@ -14,7 +14,7 @@
     </tr>
     @foreach (var paste in Model)
     {
-        <form method="post" asp-route-id="@paste.Id" asp-area="AdminPanel" asp-controller="Paste" asp-action="DeletePaste">
+        <form method="post" asp-area="AdminPanel" asp-controller="Paste" asp-action="DeletePaste">
             <tr class="adminTable">
                 <td class="adminTable text-white"> @paste.Title </td>
                 <td class="adminTable text-white"> @paste.Author.UserName </td>
@@ -32,7 +32,8 @@
                         }
                     </a>
                 </td>
-                <td class="adminTable"><button type="submit" class="btn-danger">Удалить пост</button></td>
+                <td class="adminTable"><button type="submit" class="btn-danger" asp-for="hash">Удалить пост</button></td>
+                <input style="display: none" name="hash" value="@paste.Hash" />
             </tr>
         </form>
     }

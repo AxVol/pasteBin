@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using pasteBin.Areas.AdminPanel.ViewModels;
 using pasteBin.Areas.Home.Models;
 using pasteBin.Database;
+using pasteBin.Services;
 
 namespace pasteBin.Areas.AdminPanel.Controllers
 {
@@ -12,11 +13,13 @@ namespace pasteBin.Areas.AdminPanel.Controllers
     {
         private readonly DBContext db;
         private readonly UserManager<IdentityUser> userManager;
+        private readonly IRedis redis;
 
-        public UserController(DBContext contex, UserManager<IdentityUser> uManager)
+        public UserController(DBContext contex, UserManager<IdentityUser> uManager, IRedis cache)
         {
             db = contex;
             userManager = uManager;
+            redis = cache;
         }
 
         [Route("Admin/Users")]
@@ -41,7 +44,8 @@ namespace pasteBin.Areas.AdminPanel.Controllers
                 IEnumerable<ReportModel> reports = db.reports.Where(r => r.User == user).ToList();
                 IEnumerable<ViewCheatModel> cheats = db.viewCheats.Where(v => v.User == user).ToList();
 
-                await db.UpdateTables(comments, likes, reports, pasts, cheats);
+                db.UpdateTables(comments, likes, reports, pasts, cheats);
+                redis.Remove(pasts);
 
                 IdentityResult result = await userManager.DeleteAsync(user);
             }

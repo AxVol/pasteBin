@@ -1,12 +1,12 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using System.Text.Json;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Distributed;
 using pasteBin.Database;
 using pasteBin.Areas.Home.Models;
 using pasteBin.Areas.Home.ViewModels;
-using System.Text.Json;
-using System.Net.NetworkInformation;
+using pasteBin.Services;
 
 namespace pasteBin.Areas.Home.Controllers
 {
@@ -16,27 +16,22 @@ namespace pasteBin.Areas.Home.Controllers
         private readonly DBContext dataBase;
         private readonly UserManager<IdentityUser> userManager;
         private readonly SignInManager<IdentityUser> signInManager;
-        private readonly IDistributedCache cache;
-        private readonly ILogger<PasteController> logger;
+        private readonly IRedis redis;
 
         public PasteController(DBContext context, SignInManager<IdentityUser> sign, 
-            UserManager<IdentityUser> user, IDistributedCache cacheDistributed, ILogger<PasteController> log)
+            UserManager<IdentityUser> user, IRedis cacheDistributed)
         {
             dataBase = context;
             signInManager = sign;
             userManager = user;
-            cache = cacheDistributed;
-            logger = log;
+            redis = cacheDistributed;
         }
 
         [Route("Paste/{hash}")]
         public async Task<IActionResult> Paste(string hash)
         {
-            PasteModel? paste = null;
-            string? pasteString = await cache.GetStringAsync(hash);
-
-            if (pasteString != null)
-                paste = JsonSerializer.Deserialize<PasteModel>(pasteString);
+            PasteModel? paste = redis.Get(hash);
+            string? cacheStatus = paste == null ? null : "cache";
 
             if (paste == null)
             {
@@ -51,7 +46,7 @@ namespace pasteBin.Areas.Home.Controllers
 
             PasteViewModel viewModel = new (paste, comments, likes);
 
-            await AddViews(paste);
+            await AddViews(paste, cacheStatus);
 
             return View(viewModel);
         }
@@ -59,7 +54,7 @@ namespace pasteBin.Areas.Home.Controllers
         [Route("Paste/Popular")]
         public IActionResult Popular()
         {
-            IEnumerable<PasteModel> pasts = dataBase.pasts.Include(a => a.Author).OrderByDescending(a => a.View).Take(10);
+            IEnumerable<PasteModel> pasts = redis.GetAll().OrderByDescending(p => p.View);
 
             ViewBag.Host = $"{HttpContext.Request.Scheme}://{HttpContext.Request.Host}";
 
@@ -138,7 +133,7 @@ namespace pasteBin.Areas.Home.Controllers
             return RedirectToAction("Paste", new { hash });
         }
 
-        private async Task AddViews(PasteModel paste)
+        private async Task AddViews(PasteModel paste, string cacheStatus)
         {
             IdentityUser user = await userManager.GetUserAsync(HttpContext.User);
 
@@ -157,9 +152,13 @@ namespace pasteBin.Areas.Home.Controllers
                         User = user
                     };
 
-                    //dataBase.viewCheats.Add(viewCheat);
                     dataBase.Entry(viewCheat).State = EntityState.Added;
                     await dataBase.SaveChangesAsync();
+
+                    if (cacheStatus != null)
+                    {
+                        redis.Update(paste);
+                    }
                 }
             }
         }
