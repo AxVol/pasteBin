@@ -27,17 +27,17 @@ namespace pasteBin.Services.implementation
             List<string> keysList = new();
             List<PasteModel> pasts = new();
 
-            using (ConnectionMultiplexer redis = ConnectionMultiplexer.Connect("127.0.0.1:6379"))
+            using (ConnectionMultiplexer redis = ConnectionMultiplexer.Connect("redis:6379")) //127.0.0.1
             {
                 IDatabase redisDb = redis.GetDatabase();
 
-                var keys = redis.GetServer("127.0.0.1", 6379).Keys(pattern: "*");
+                var keys = redis.GetServer("redis", 6379).Keys(pattern: "*");
                 keysList.AddRange(keys.Select(key => (string)key).ToList());
             }
 
             foreach (string key in keysList)
             {
-                PasteModel paste = Get(key.Replace("local", string.Empty));
+                PasteModel paste = Get(key.Replace("redis", string.Empty));
 
                 pasts.Add(paste);
             }

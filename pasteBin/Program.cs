@@ -23,7 +23,7 @@ builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.Requ
 
 builder.Services.AddStackExchangeRedisCache(options =>
 {
-    options.Configuration = "localhost";
+    options.Configuration = "redis";
     options.InstanceName = "local";
 });
 

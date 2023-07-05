@@ -1,0 +1,30 @@
+version: "3,9"
+
+services:
+  sqlserver:
+    container_name: mssqlserver
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    ports:
+      - "1433:1433"
+    environment:
+      SA_PASSWORD: "OpoAxVol!69"
+      ACCEPT_EULA: "Y"
+  redis:
+    container_name: cache
+    image: redis:6-alpine
+    ports: 
+      - "6379:6379"
+  pastebin:
+    container_name: pastebin
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "32773:80"
+      - "32771:7041"
+      - "32772:433"
+    depends_on:
+      - sqlserver
+      - redis
+    links:
+      - redis

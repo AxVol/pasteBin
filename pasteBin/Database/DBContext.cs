@@ -65,7 +65,7 @@ namespace pasteBin.Database
 
         public DBContext(DbContextOptions<DBContext> options) : base(options)
         {
-
+            Database.EnsureCreated();
         }
     }
 }
