@@ -7,7 +7,7 @@ services:
     ports:
       - "1433:1433"
     environment:
-      SA_PASSWORD: "OpoAxVol!69"
+      SA_PASSWORD: "strongPassword"
       ACCEPT_EULA: "Y"
   redis:
     container_name: cache
